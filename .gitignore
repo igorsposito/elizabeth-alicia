@@ -1,41 +1,89 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# ============================================
+# ELIZABETH ALÍCIA — ÁGAVE LAB
+# Next.js / TypeScript / Vercel
+# ============================================
+
+# Dependencies
 /node_modules
 /.pnp
 .pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+/.yarn/*
+!/.yarn/patches
+!/.yarn/plugins
+!/.yarn/releases
+!/.yarn/versions
 
-# testing
-/coverage
-
-# next.js
+# Next.js
 /.next/
 /out/
+/build/
+/dist/
 
-# production
-/build
+# Turbopack
+.turbo/
 
-# misc
-.DS_Store
-*.pem
+# Production
+.vercel_build_output/
 
-# debug
+# Vercel
+.vercel/
+
+# Testing
+/coverage/
+.nyc_output/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
+*.log
 
-# env files (can opt-in for committing if needed)
-.env*
+# Operating systems
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 
-# vercel
-.vercel
+# Editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.cache/
+
+# Local backups
+*.bak
+*.backup
+
+# Deployment
+.netlify/
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+
+# ============================================
+# IMPORTANT
+# Keep public images and branding assets
+# tracked in Git.
+# ============================================
