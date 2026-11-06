@@ -2,6 +2,8 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope, Outfit, Allura } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
 import "./globals.css";
 
 // Fontes originais do projeto
@@ -24,13 +26,13 @@ const allura = Allura({
   display: "swap",
 });
 
-// Domínio oficial, quando confirmado.
-// Não configure NEXT_PUBLIC_SITE_URL com o domínio futuro
-// enquanto estiver usando somente a URL da Vercel.
-const officialDomain =
-  process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "");
+// URL pública principal do site.
+// Configure NEXT_PUBLIC_SITE_URL na Vercel quando
+// o domínio oficial estiver confirmado.
+const officialDomain = process.env.NEXT_PUBLIC_SITE_URL
+  ?.trim()
+  .replace(/\/+$/, "");
 
-// URL da implantação atual na Vercel
 const vercelDomain =
   process.env.VERCEL_PROJECT_PRODUCTION_URL ||
   process.env.VERCEL_URL;
@@ -41,20 +43,21 @@ const siteUrl = officialDomain
     ? `https://${vercelDomain}`
     : "http://localhost:3000";
 
-// Quando o domínio oficial estiver configurado,
-// ele será o endereço canônico do site.
-const canonicalUrl = officialDomain || siteUrl;
+const canonicalUrl = siteUrl;
 
-const isProduction =
-  process.env.VERCEL_ENV === "production";
+const isProduction = process.env.VERCEL_ENV === "production";
+
+// Não indexar ambientes de preview.
+const allowIndexing =
+  isProduction && Boolean(officialDomain);
 
 const siteName = "Elizabeth Alícia";
 
 const siteTitle =
-  "Elizabeth Alícia | Tricologia Clínica Avançada e Estética";
+  "Elizabeth Alícia | Tricologia Clínica e Saúde Capilar";
 
 const siteDescription =
-  "Conheça Elizabeth Alícia, farmacêutica tricologista com atuação em tricologia clínica avançada e estética. Avaliação capilar individualizada e cuidados com a saúde dos fios e do couro cabeludo.";
+  "Conheça Elizabeth Alícia, farmacêutica com atuação em tricologia clínica. Avaliação individualizada da saúde capilar, dos cabelos e do couro cabeludo.";
 
 const ogImage = "/og-image.png";
 
@@ -90,8 +93,8 @@ export const metadata: Metadata = {
     "saúde capilar",
     "avaliação capilar",
     "queda capilar",
-    "cuidados com o couro cabeludo",
-    "estética",
+    "saúde do couro cabeludo",
+    "cuidados com os cabelos",
   ],
 
   category: "health",
@@ -107,13 +110,13 @@ export const metadata: Metadata = {
     siteName,
     title: siteTitle,
     description:
-      "Um novo olhar para a sua saúde capilar, com cuidado individualizado. Conheça a atuação de Elizabeth Alícia em tricologia clínica avançada e estética.",
+      "Um novo olhar para a sua saúde capilar, com cuidado individualizado. Conheça a atuação de Elizabeth Alícia em tricologia clínica.",
     images: [
       {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: "Elizabeth Alícia — Saúde e Estética",
+        alt: "Elizabeth Alícia — Tricologia Clínica e Saúde Capilar",
         type: "image/png",
       },
     ],
@@ -123,16 +126,16 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteTitle,
     description:
-      "Tricologia clínica avançada e estética. Um novo olhar para a sua saúde capilar.",
+      "Tricologia clínica e saúde capilar com uma abordagem individualizada.",
     images: [ogImage],
   },
 
   robots: {
-    index: isProduction,
-    follow: isProduction,
+    index: allowIndexing,
+    follow: allowIndexing,
     googleBot: {
-      index: isProduction,
-      follow: isProduction,
+      index: allowIndexing,
+      follow: allowIndexing,
       "max-image-preview": "large",
       "max-snippet": -1,
       "max-video-preview": -1,
@@ -144,16 +147,12 @@ export const metadata: Metadata = {
     address: false,
     email: false,
   },
-
-  other: {
-    "theme-color": "#211C19",
-  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#211C19",
+  themeColor: "#F7F4EF",
 };
 
 export default function RootLayout({
@@ -177,7 +176,7 @@ export default function RootLayout({
         "@id": `${canonicalUrl}/#elizabeth-alicia`,
         name: siteName,
         description:
-          "Farmacêutica tricologista com atuação em tricologia clínica avançada e estética.",
+          "Farmacêutica com atuação em tricologia clínica e saúde capilar.",
         url: canonicalUrl,
         sameAs: [
           "https://www.instagram.com/elizabethalicia/",
@@ -201,13 +200,15 @@ export default function RootLayout({
         {children}
 
         <Analytics />
+        <SpeedInsights />
 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(
-              structuredData
-            ).replace(/</g, "\\u003c"),
+            __html: JSON.stringify(structuredData).replace(
+              /</g,
+              "\\u003c"
+            ),
           }}
         />
       </body>

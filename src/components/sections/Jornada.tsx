@@ -22,26 +22,26 @@ const ease = [0.22, 1, 0.36, 1] as const;
 const etapas = [
   {
     number: "01",
-    title: "Escuta e avaliação",
+    title: "Consulta e investigação",
     description:
-      "O primeiro passo é compreender suas queixas, sua história e suas necessidades, com atenção às particularidades de cada pessoa.",
+      "O atendimento começa com uma conversa sobre suas queixas, histórico e rotina, seguida da avaliação dos fios e do couro cabeludo.",
   },
   {
     number: "02",
-    title: "Plano individualizado",
+    title: "Conduta individualizada",
     description:
-      "A partir da avaliação, é possível definir uma abordagem de cuidado alinhada às necessidades identificadas.",
+      "A partir da avaliação clínica, são consideradas as possibilidades terapêuticas adequadas às necessidades identificadas.",
   },
   {
     number: "03",
-    title: "Acompanhamento",
+    title: "Evolução e acompanhamento",
     description:
-      "O cuidado continua com a observação da evolução e a reavaliação dos próximos passos, conforme cada situação.",
+      "A resposta às condutas adotadas é observada ao longo do tempo, permitindo reavaliações e ajustes quando necessários.",
   },
 ];
 
 const whatsappMessage =
-  "Oi! Vim pelo site e gostaria de saber mais sobre como funciona a avaliação e o acompanhamento com a Dra. Elizabeth.";
+  "Olá, Elizabeth! Vim pelo seu site e gostaria de agendar uma consulta para saber mais sobre o acompanhamento capilar.";
 
 const whatsappUrl = `https://api.whatsapp.com/send?phone=5577999341034&text=${encodeURIComponent(
   whatsappMessage
@@ -67,7 +67,7 @@ export default function Jornada() {
       ref={sectionRef}
       id="jornada"
       aria-labelledby="jornada-title"
-      className="relative isolate overflow-hidden bg-[#E7D8C6] py-24 text-[#49372F] sm:py-28 lg:py-36"
+      className="relative isolate overflow-hidden bg-[#EEEAE3] py-24 text-[#49372F] sm:py-28 lg:py-36"
     >
       {/* Textura arquitetônica extremamente sutil */}
       <div
@@ -94,11 +94,11 @@ export default function Jornada() {
             transition={{ duration: 0.85, ease }}
             className="max-w-[780px] font-display text-[clamp(2.7rem,4.8vw,5.3rem)] font-light leading-[1.08] tracking-[-0.055em]"
           >
-            Cuidado em cada
+            Da primeira consulta
             <span
               className={`${scriptFont.className} ml-12 inline-block text-[1.28em] leading-[0.5] tracking-normal text-[#B58E69]`}
             >
-              pequeno detalhe
+              a cada nova etapa.
             </span>
           </motion.h2>
 
@@ -119,9 +119,7 @@ export default function Jornada() {
             }}
             className="max-w-[410px] text-[16px] font-light leading-[1.85] text-[#73645B] sm:text-[18px]"
           >
-            Do primeiro encontro ao acompanhamento,
-            cada etapa respeita suas necessidades,
-            sua história e suas particularidades.
+            A saúde capilar exige uma investigação criteriosa, que considere o histórico, as queixas e as particularidades de cada paciente. É a partir dessa análise que são definidas as condutas mais adequadas
           </motion.p>
         </div>
 
@@ -184,7 +182,7 @@ export default function Jornada() {
                   </span>
 
                   {/* Marcador na linha */}
-                  <span className="absolute bottom-[66px] -left-[60px] z-10 h-[13px] w-[13px] rounded-full border-[3px] border-[#E7D8C6] bg-[#B58E69] lg:bottom-[80px] lg:left-0" />
+                  <span className="absolute bottom-[66px] -left-[60px] z-10 h-[13px] w-[13px] rounded-full border-[3px] border-[#EEEAE3] bg-[#B58E69] lg:bottom-[80px] lg:left-0" />
                 </div>
 
                 {/* Conteúdo */}
@@ -219,9 +217,9 @@ export default function Jornada() {
           className="mt-20 flex flex-col gap-8 border-t border-[#49372F]/20 pt-10 sm:mt-24 lg:flex-row lg:items-center lg:justify-between"
         >
           <p className="max-w-[560px] font-display text-[clamp(1.6rem,2.5vw,2.8rem)] font-light leading-[1.3] tracking-[-0.04em]">
-            O primeiro passo é uma
+            O próximo passo é a sua
             <span className="text-[#B58E69]">
-              {" "}conversa.
+              {" "}consulta.
             </span>
           </p>
 
@@ -231,7 +229,7 @@ export default function Jornada() {
             rel="noopener noreferrer"
             className="group inline-flex min-h-[60px] w-fit shrink-0 items-center justify-center gap-5 rounded-full bg-[#49372F] px-9 py-5 text-[14px] font-semibold tracking-wide text-[#F7F3EC] transition-all duration-300 hover:bg-[#B58E69] hover:text-[#211C19] sm:px-11 sm:text-[15px]"
           >
-            Agendar minha avaliação
+            Agendar minha consulta
 
             <ArrowUpRight
               size={19}

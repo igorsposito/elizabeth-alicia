@@ -1,8 +1,13 @@
+
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+} from "motion/react";
 import { ArrowUpRight, X } from "lucide-react";
 import { MonteCarlo } from "next/font/google";
 
@@ -19,13 +24,12 @@ const services = [
     number: "01",
     title: "Tricologia Clínica",
     description:
-      "Uma abordagem dedicada à investigação e ao cuidado da saúde capilar, considerando as particularidades do couro cabeludo, dos fios e de cada paciente.",
+      "Avaliação individualizada das alterações capilares, considerando a saúde do couro cabeludo, dos fios e as particularidades de cada paciente.",
     image: "/images/tricologia10.jpg",
-    alt: "Atendimento especializado em tricologia clínica",
-    featured: true,
+    alt: "Atendimento em tricologia clínica",
     procedures: [
-      "Avaliação de queixas e distúrbios capilares",
-      "Acompanhamento de alopecias",
+      "Avaliação de queixas e alterações capilares",
+      "Acompanhamento de diferentes tipos de alopecia",
       "Cuidados relacionados à dermatite seborreica",
     ],
   },
@@ -33,31 +37,13 @@ const services = [
     number: "02",
     title: "Terapia Capilar",
     description:
-      "Protocolos individualizados que valorizam a saúde do couro cabeludo e dos fios.",
+      "Recursos e protocolos de cuidado capilar selecionados conforme as necessidades identificadas durante a avaliação.",
     image: "/images/terapia-capilar10.jpg",
-    alt: "Tratamento e terapia capilar",
-    featured: false,
+    alt: "Atendimento e terapia capilar",
     procedures: [
       "Laser e LEDterapia capilar",
       "Microagulhamento capilar",
-      "Cuidados e protocolos para o couro cabeludo",
-    ],
-  },
-  {
-    number: "03",
-    title: "Estética",
-    description:
-      "Um olhar cuidadoso para a beleza, o bem-estar e a autoestima.",
-    image: "/images/estetica.jpg",
-    alt: "Cuidados estéticos individualizados",
-    featured: false,
-    procedures: [
-      "Toxina botulínica (Botox)",
-      "Limpeza de pele",
-      "Microagulhamento facial",
-      "Clareamento de manchas",
-      "Tratamento de cicatrizes de acne",
-      "Remoção de microvasos (PEIM)",
+      "Protocolos individualizados para o couro cabeludo",
     ],
   },
 ] as const;
@@ -65,225 +51,305 @@ const services = [
 type Service = (typeof services)[number];
 
 const whatsappMessage =
-  "Oi! Vim pelo site e gostaria de agendar uma avaliação com a Dra. Elizabeth.";
+  "Olá, Elizabeth! Vim pelo seu site e gostaria de agendar uma consulta.";
 
-const whatsappUrl = `https://api.whatsapp.com/send?phone=5577999341034&text=${encodeURIComponent(whatsappMessage)}`;
+const whatsappUrl =
+  "https://api.whatsapp.com/send?phone=5577999341034&text=" +
+  encodeURIComponent(whatsappMessage);
 
 function getServiceWhatsappUrl(title: string) {
-  const message = `Oi! Vim pelo site e gostaria de saber mais sobre os procedimentos de ${title} com a Dra. Elizabeth.`;
-  return `https://api.whatsapp.com/send?phone=5577999341034&text=${encodeURIComponent(message)}`;
+  const message = `Olá, Elizabeth! Vim pelo seu site e gostaria de agendar uma consulta para conversar sobre ${title.toLowerCase()}.`;
+
+  return (
+    "https://api.whatsapp.com/send?phone=5577999341034&text=" +
+    encodeURIComponent(message)
+  );
 }
 
 export default function Atuacao() {
   const reducedMotion = useReducedMotion();
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const prefersReducedMotion = reducedMotion === true;
+
+  const [selectedService, setSelectedService] =
+    useState<Service | null>(null);
+
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (!selectedService) return;
+
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const onEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSelectedService(null);
+
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedService(null);
+      }
+
+      if (event.key === "Tab") {
+        const modal = document.getElementById(
+          "atuacao-modal"
+        );
+
+        if (!modal) return;
+
+        const focusable = Array.from(
+          modal.querySelectorAll<HTMLElement>(
+            'button, a[href], [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter(
+          (element) =>
+            !element.hasAttribute("disabled") &&
+            element.getAttribute("tabindex") !== "-1"
+        );
+
+        if (!focusable.length) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (
+          event.shiftKey &&
+          document.activeElement === first
+        ) {
+          event.preventDefault();
+          last.focus();
+        } else if (
+          !event.shiftKey &&
+          document.activeElement === last
+        ) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
     };
-    window.addEventListener("keydown", onEscape);
+
+    document.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", onEscape);
+      document.removeEventListener(
+        "keydown",
+        handleKeyDown
+      );
+      lastTriggerRef.current?.focus();
     };
   }, [selectedService]);
+
+  const openService = (
+    service: Service,
+    trigger: HTMLButtonElement
+  ) => {
+    lastTriggerRef.current = trigger;
+    setSelectedService(service);
+  };
 
   return (
     <section
       id="atuacao"
       aria-labelledby="atuacao-title"
-      className="relative isolate scroll-mt-20 overflow-hidden bg-[#211C19] py-24 text-[#F7F3EC] sm:py-28 lg:py-32"
+      className="relative isolate scroll-mt-20 overflow-hidden bg-[#EEEAE3] py-24 text-[#353535] sm:py-28 lg:py-32"
     >
-      {/* Textura topográfica em toda a seção */}
+      {/* Iluminação decorativa */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        className="pointer-events-none absolute -right-40 -top-40 h-[700px] w-[700px] rounded-full bg-[radial-gradient(circle,rgba(201,167,122,0.14),transparent_70%)]"
+      />
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-60 -left-40 h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.65),transparent_70%)]"
+      />
+
+      {/* Curvas laterais discretas */}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 460 900"
+        fill="none"
+        className="pointer-events-none absolute -right-28 top-0 hidden h-full w-[420px] lg:block"
       >
-        <motion.svg
-          viewBox="0 0 1440 1600"
-          preserveAspectRatio="xMidYMid slice"
-          fill="none"
-          className="absolute inset-0 h-full w-full"
-          animate={
-            reducedMotion
-              ? undefined
-              : { y: [-18, 18, -18], x: [-8, 8, -8] }
-          }
-          transition={{ duration: 35, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <defs>
-            <linearGradient
-              id="atuacao-topographic-stroke"
-              x1="0"
-              y1="0"
-              x2="1"
-              y2="1"
-            >
-              <stop offset="0%" stopColor="#C5A27F" stopOpacity="0.03" />
-              <stop offset="45%" stopColor="#C5A27F" stopOpacity="0.12" />
-              <stop offset="100%" stopColor="#C5A27F" stopOpacity="0.035" />
-            </linearGradient>
-          </defs>
-
-          {Array.from({ length: 23 }, (_, index) => {
-            const offset = index * 35;
-            return (
-              <path
-                key={index}
-                d={`
-                  M ${-450 + offset} -200
-                  C ${300 + offset} 200,
-                    ${-350 + offset} 620,
-                    ${280 + offset} 900
-                  S ${650 + offset} 1450,
-                    ${250 + offset} 1850
-                `}
-                stroke="url(#atuacao-topographic-stroke)"
-                strokeWidth={index % 5 === 0 ? 1.1 : 0.7}
-              />
-            );
-          })}
-        </motion.svg>
-
-        {/* Suaviza a textura nas laterais */}
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,#211C19_0%,transparent_20%,transparent_80%,#211C19_100%)] opacity-50" />
-
-        {/* Suaviza a textura nas extremidades */}
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,#211C19_0%,transparent_15%,transparent_85%,#211C19_100%)] opacity-60" />
-      </div>
+        <path
+          d="M340 -100C50 130 90 355 285 510C475 660 340 800 100 980"
+          stroke="#C9A77A"
+          strokeWidth="1.2"
+          opacity=".28"
+        />
+        <path
+          d="M405 -80C135 155 150 380 340 540C505 685 390 845 170 990"
+          stroke="#C9A77A"
+          strokeWidth="0.8"
+          opacity=".18"
+        />
+      </svg>
 
       <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-16 xl:px-24">
         {/* Introdução */}
-        <div className="mb-14 grid items-end gap-8 lg:mb-20 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
+        <div className="mb-14 grid items-end gap-8 lg:mb-16 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
           <motion.h2
             id="atuacao-title"
-            initial={{ opacity: 0, y: reducedMotion ? 0 : 35 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{
+              opacity: 0,
+              y: prefersReducedMotion ? 0 : 30,
+            }}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+            }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.9, ease }}
-            className="font-display text-[clamp(2.8rem,5.2vw,5.8rem)] font-light leading-[1.03] tracking-[-0.055em]"
+            className="font-display text-[clamp(2.8rem,5.2vw,5.5rem)] font-light leading-[1.04] tracking-[-0.055em]"
           >
-            Ciência e cuidado
+            Ciência aplicada à
             <br />
-            para cada
             <span
-              className={`${scriptFont.className} ml-3 inline-block text-[1.25em] leading-[0.8] tracking-normal text-[#C5A27F]`}
+              className={`${scriptFont.className} inline-block text-[1.25em] leading-[0.8] tracking-normal text-[#B69268]`}
             >
-              história.
+              saúde capilar.
             </span>
           </motion.h2>
 
           <motion.p
-            initial={{ opacity: 0, y: reducedMotion ? 0 : 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{
+              opacity: 0,
+              y: prefersReducedMotion ? 0 : 20,
+            }}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+            }}
             viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.8, delay: 0.15, ease }}
-            className="max-w-[410px] text-[16px] font-light leading-[1.85] text-[#E7D8C6]/75 sm:text-[18px]"
+            transition={{
+              duration: 0.8,
+              delay: 0.15,
+              ease,
+            }}
+            className="max-w-[430px] text-[16px] leading-[1.85] text-[#625B55] sm:text-[18px]"
           >
-            Cada pessoa possui uma história única.
-            Por isso, o cuidado começa com uma escuta
-            atenta e uma abordagem pensada para suas
-            necessidades.
+            Cada couro cabeludo e cada história capilar
+            apresentam necessidades diferentes. Por isso,
+            a avaliação individualizada orienta a escolha
+            dos cuidados e o acompanhamento.
           </motion.p>
         </div>
 
-        {/* Grid de especialidades */}
-        <div className="grid gap-5 lg:grid-cols-2 lg:gap-6">
+        {/* Cards */}
+        <div className="grid gap-5 lg:grid-cols-2 lg:gap-7">
           {services.map((service, index) => (
             <motion.article
               key={service.number}
-              initial={{ opacity: 0, y: reducedMotion ? 0 : 45 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ duration: 0.85, delay: index * 0.1, ease }}
-              className={`group relative isolate overflow-hidden rounded-[16px] border border-[#E7D8C6]/15 bg-[#332B27] ${
-                service.featured
-                  ? "min-h-[520px] lg:row-span-2 lg:min-h-[720px]"
-                  : "min-h-[340px] lg:min-h-[348px]"
-              }`}
+              initial={{
+                opacity: 0,
+                y: prefersReducedMotion ? 0 : 40,
+              }}
+              whileInView={{
+                opacity: 1,
+                y: 0,
+              }}
+              viewport={{
+                once: true,
+                amount: 0.15,
+              }}
+              transition={{
+                duration: 0.85,
+                delay: index * 0.1,
+                ease,
+              }}
+              className="group relative isolate min-h-[490px] overflow-hidden rounded-[18px] bg-[#D8D0C5] sm:min-h-[560px] lg:min-h-[650px]"
             >
-              {/* Imagem */}
               <Image
                 src={service.image}
                 alt={service.alt}
                 fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
+                sizes="(max-width: 1023px) 100vw, 50vw"
+                className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.055]"
               />
 
-              {/* Degradê para leitura */}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#100D0B]/95 via-[#100D0B]/40 to-[#100D0B]/10" />
+              {/* Contraste para os textos */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#171513]/95 via-[#171513]/35 to-transparent"
+              />
 
               {/* Número */}
-              <span className="absolute left-6 top-6 z-10 font-display text-[13px] font-medium tracking-[0.16em] text-[#E7D8C6]/80 sm:left-8 sm:top-8">
+              <span className="absolute left-7 top-7 z-10 font-display text-[14px] tracking-[0.14em] text-white/85 sm:left-9 sm:top-9">
                 {service.number}
               </span>
 
               {/* Ícone */}
-              <span className="absolute right-6 top-6 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white backdrop-blur-md transition-all duration-300 group-hover:border-[#C5A27F] group-hover:bg-[#C5A27F] group-hover:text-[#211C19] sm:right-8 sm:top-8">
-                <ArrowUpRight size={19} strokeWidth={1.5} />
+              <span
+                aria-hidden="true"
+                className="absolute right-7 top-7 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white backdrop-blur-md transition-all duration-300 group-hover:rotate-45 group-hover:border-[#C9A77A] group-hover:bg-[#C9A77A] group-hover:text-[#353535] sm:right-9 sm:top-9"
+              >
+                <ArrowUpRight
+                  size={20}
+                  strokeWidth={1.5}
+                />
               </span>
 
               {/* Conteúdo */}
-              <div className="absolute inset-x-0 bottom-0 z-10 p-7 sm:p-9 lg:p-10">
-                <h3
-                  className={`font-display font-light tracking-[-0.045em] text-[#F7F3EC] ${
-                    service.featured
-                      ? "text-[clamp(2.3rem,3.5vw,4.3rem)]"
-                      : "text-[clamp(2rem,2.6vw,3rem)]"
-                  }`}
-                >
+              <div className="absolute inset-x-0 bottom-0 z-10 p-7 sm:p-10">
+                <h3 className="max-w-[470px] font-display text-[clamp(2.4rem,3.5vw,4rem)] font-light leading-[1.08] tracking-[-0.045em] text-white">
                   {service.title}
                 </h3>
 
-                <div className="mt-4 h-px w-12 bg-[#C5A27F] transition-all duration-500 group-hover:w-20" />
-
-                <p
-                  className={`mt-5 font-light leading-[1.8] text-[#F7F3EC]/80 ${
-                    service.featured
-                      ? "max-w-[440px] text-[16px] sm:text-[18px]"
-                      : "max-w-[400px] text-[15px] sm:text-[16px]"
-                  }`}
-                >
+                <p className="mt-5 max-w-[430px] text-[15px] leading-[1.8] text-white/85 sm:text-[17px]">
                   {service.description}
                 </p>
+
+                <div className="mt-6 flex items-center gap-3 text-[12px] font-semibold tracking-wide text-[#E6D2B6]">
+                  Saiba mais
+                  <ArrowUpRight size={16} />
+                </div>
               </div>
 
-              {/* Interação sobre o card sem alterar o layout */}
+              {/* Área clicável */}
               <button
                 type="button"
-                onClick={() => setSelectedService(service)}
-                aria-label={`Ver procedimentos de ${service.title}`}
-                className="absolute inset-0 z-20 cursor-pointer rounded-[16px] focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#C5A27F]"
+                onClick={(event) =>
+                  openService(service, event.currentTarget)
+                }
+                aria-label={`Conhecer os cuidados de ${service.title}`}
+                className="absolute inset-0 z-20 cursor-pointer rounded-[18px] focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[#C9A77A]"
               />
             </motion.article>
           ))}
         </div>
 
-        {/* CTA final */}
+        {/* CTA inferior */}
         <motion.div
-          initial={{ opacity: 0, y: reducedMotion ? 0 : 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
+          initial={{
+            opacity: 0,
+            y: prefersReducedMotion ? 0 : 25,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{
+            once: true,
+            amount: 0.4,
+          }}
           transition={{ duration: 0.8, ease }}
-          className="mt-14 flex flex-col gap-7 border-t border-[#E7D8C6]/15 pt-10 sm:flex-row sm:items-center sm:justify-between lg:mt-20"
+          className="mt-14 flex flex-col gap-7 border-t border-[#C9A77A]/35 pt-10 sm:flex-row sm:items-center sm:justify-between lg:mt-16"
         >
-          <p className="max-w-[480px] font-display text-[clamp(1.5rem,2.2vw,2.3rem)] font-light leading-[1.3] tracking-[-0.035em]">
-            Seu cuidado começa com
-            <span className="text-[#C5A27F]">{" "}uma conversa.</span>
+          <p className="max-w-[530px] font-display text-[clamp(1.6rem,2.3vw,2.4rem)] font-light leading-[1.3] tracking-[-0.035em]">
+            Um acompanhamento pensado para{" "}
+            <span className="text-[#A57E55]">
+              suas necessidades.
+            </span>
           </p>
 
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex min-h-[60px] w-fit items-center justify-center gap-5 rounded-full border border-[#C5A27F]/60 px-9 py-5 text-[14px] font-semibold tracking-wide text-[#F7F3EC] transition-all duration-300 hover:border-[#C5A27F] hover:bg-[#C5A27F] hover:text-[#211C19] sm:px-11 sm:text-[15px]"
+            className="group inline-flex min-h-[58px] w-fit items-center justify-center gap-5 rounded-full bg-[#353535] px-8 py-4 text-[13px] font-semibold text-white shadow-[0_10px_30px_rgba(53,53,53,0.10)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#A57E55] sm:px-10"
           >
-            Agendar uma avaliação
+            Agendar minha consulta
+
             <ArrowUpRight
               size={19}
               className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
@@ -292,79 +358,106 @@ export default function Atuacao() {
         </motion.div>
       </div>
 
-      {/* Modal dos procedimentos */}
+      {/* Modal dos cuidados */}
       <AnimatePresence>
         {selectedService && (
           <motion.div
-            className="fixed inset-0 z-[300] flex items-center justify-center bg-[#100D0B]/85 px-4 py-8 backdrop-blur-md sm:px-6"
+            className="fixed inset-0 z-[300] flex items-center justify-center bg-[#171513]/80 px-4 py-8 backdrop-blur-md sm:px-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
             onMouseDown={(event) => {
-              if (event.target === event.currentTarget) setSelectedService(null);
+              if (event.target === event.currentTarget) {
+                setSelectedService(null);
+              }
             }}
           >
             <motion.div
+              id="atuacao-modal"
               role="dialog"
               aria-modal="true"
               aria-labelledby="atuacao-modal-title"
-              initial={{ opacity: 0, y: reducedMotion ? 0 : 24, scale: reducedMotion ? 1 : 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: reducedMotion ? 0 : 16, scale: reducedMotion ? 1 : 0.98 }}
-              transition={{ duration: 0.4, ease }}
-              className="relative max-h-[90vh] w-full max-w-[650px] overflow-y-auto rounded-[20px] border border-[#C5A27F]/25 bg-[#251E1A] p-7 shadow-2xl sm:p-11"
+              initial={{
+                opacity: 0,
+                y: prefersReducedMotion ? 0 : 24,
+                scale: prefersReducedMotion ? 1 : 0.97,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                y: prefersReducedMotion ? 0 : 16,
+                scale: prefersReducedMotion ? 1 : 0.98,
+              }}
+              transition={{
+                duration: 0.4,
+                ease,
+              }}
+              className="relative max-h-[90dvh] w-full max-w-[650px] overflow-y-auto rounded-[22px] border border-[#DDD2C3] bg-[#FAF9F6] p-7 shadow-[0_30px_100px_rgba(0,0,0,0.20)] sm:p-11"
             >
               <button
+                ref={closeButtonRef}
                 type="button"
-                aria-label="Fechar procedimentos"
+                aria-label="Fechar informações"
                 onClick={() => setSelectedService(null)}
-                className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full border border-[#E7D8C6]/20 text-[#F7F3EC] transition-colors hover:bg-[#E7D8C6]/10"
+                className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full border border-[#DDD2C3] text-[#353535] transition-colors hover:bg-[#EEEAE3]"
               >
                 <X size={20} />
               </button>
 
               <h3
                 id="atuacao-modal-title"
-                className="max-w-[490px] pr-10 font-display text-[clamp(2rem,4vw,3.4rem)] font-light leading-[1.15] tracking-[-0.045em] text-[#F7F3EC]"
+                className="max-w-[490px] pr-10 font-display text-[clamp(2rem,4vw,3.4rem)] font-light leading-[1.15] tracking-[-0.045em] text-[#353535]"
               >
                 {selectedService.title}
               </h3>
-              <p className="mt-5 max-w-[520px] text-[15px] font-light leading-[1.8] text-[#E7D8C6]/75">
+
+              <p className="mt-5 max-w-[520px] text-[16px] leading-[1.8] text-[#625B55]">
                 {selectedService.description}
               </p>
 
-              <div className="mt-8 border-t border-[#E7D8C6]/15">
-                {selectedService.procedures.map((procedure, index) => (
-                  <div
-                    key={procedure}
-                    className="flex items-start gap-5 border-b border-[#E7D8C6]/15 py-4"
-                  >
-                    <span className="min-w-6 pt-0.5 text-[12px] text-[#C5A27F]">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="text-[15px] leading-[1.6] text-[#F7F3EC]/90 sm:text-[16px]">
-                      {procedure}
-                    </span>
-                  </div>
-                ))}
+              <div className="mt-8 border-t border-[#DDD2C3]">
+                {selectedService.procedures.map(
+                  (procedure, index) => (
+                    <div
+                      key={procedure}
+                      className="flex items-start gap-5 border-b border-[#DDD2C3] py-5"
+                    >
+                      <span className="min-w-6 pt-0.5 text-[12px] font-medium text-[#A57E55]">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+
+                      <span className="text-[15px] leading-[1.6] text-[#45403C] sm:text-[16px]">
+                        {procedure}
+                      </span>
+                    </div>
+                  )
+                )}
               </div>
 
-              <p className="mt-5 text-[12px] leading-[1.7] text-[#E7D8C6]/55">
-                Procedimentos citados em material anterior da profissional.
-                Confirme a disponibilidade atual e a indicação durante o atendimento.
+              <p className="mt-6 max-w-[500px] text-[13px] leading-[1.8] text-[#766F68]">
+                A indicação dos cuidados depende de uma
+                avaliação individualizada e das necessidades
+                identificadas durante a consulta.
               </p>
 
               <a
-                href={getServiceWhatsappUrl(selectedService.title)}
+                href={getServiceWhatsappUrl(
+                  selectedService.title
+                )}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group mt-8 inline-flex min-h-[56px] items-center justify-center gap-4 rounded-full bg-[#C5A27F] px-7 py-4 text-[14px] font-semibold text-[#211C19] transition-colors hover:bg-[#E7D8C6]"
+                className="group mt-8 inline-flex min-h-[56px] items-center justify-center gap-4 rounded-full bg-[#353535] px-7 py-4 text-[13px] font-semibold text-white transition-all duration-300 hover:bg-[#A57E55]"
               >
-                Consultar pelo WhatsApp
+                Agendar minha consulta
+
                 <ArrowUpRight
                   size={18}
-                  className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1"
+                  className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
                 />
               </a>
             </motion.div>
