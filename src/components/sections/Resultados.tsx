@@ -276,7 +276,7 @@ export default function Resultados() {
           </AnimatePresence>
         </motion.div>
 
-        <p className="mt-7 max-w-[720px] text-[12px] leading-[1.8] text-[#8D7C6C]">
+        <p className="mt-7 max-w-[720px] text-[12px] leading-[1.8] text-[#65594F]">
           Imagens de casos individuais, quando disponibilizadas com autorização.
           Cada pessoa apresenta características e respostas próprias, e os registros
           não representam garantia de resultados semelhantes.
