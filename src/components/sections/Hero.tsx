@@ -21,7 +21,7 @@ const scriptFont = MonteCarlo({
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const whatsapp =
-  "https://api.whatsapp.com/send?phone=5577999341034&text=" +
+  "https://api.whatsapp.com/send?phone=5577998151743&text=" +
   encodeURIComponent(
     "Olá, Elizabeth! Vim pelo seu site e gostaria de agendar uma consulta."
   );

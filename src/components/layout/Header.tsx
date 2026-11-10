@@ -15,7 +15,7 @@ const whatsappMessage =
   "Olá, Elizabeth! Vim pelo seu site e gostaria de agendar uma consulta.";
 
 const whatsapp =
-  "https://api.whatsapp.com/send?phone=5577999341034&text=" +
+  "https://api.whatsapp.com/send?phone=5577998151743&text=" +
   encodeURIComponent(whatsappMessage);
 
 const links = [
@@ -149,12 +149,12 @@ export default function Header() {
             aria-label="Elizabeth Alícia — Início"
           >
             <Image
-              src="/images/logob.png"
+              src="/images/logo-header.png"
               alt="Elizabeth Alícia"
-              width={220}
-              height={90}
+              width={400}
+              height={180}
               priority
-              className="h-auto max-h-[58px] w-[145px] object-contain object-left brightness-0 opacity-75 transition-opacity duration-300 hover:opacity-100 sm:max-h-[64px] sm:w-[175px]"
+              className="h-auto max-h-[76px] w-[210px] object-contain object-left transition-opacity duration-300 hover:opacity-100 sm:max-h-[80px] sm:w-[250px]"
             />
           </a>
 

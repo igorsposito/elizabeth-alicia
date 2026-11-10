@@ -142,11 +142,11 @@ export default function About() {
             <div className="absolute bottom-6 left-6 right-6 z-10 sm:bottom-8 sm:left-8 sm:right-auto">
               <div className="inline-flex flex-col items-center rounded-[12px] border border-white/30 bg-[#FAF9F6]/90 px-5 py-3 text-center text-[#353535] shadow-[0_12px_40px_rgba(0,0,0,0.12)] backdrop-blur-xl sm:px-6">
                 <span className="font-display text-[23px] font-light leading-[1.15] tracking-[-0.035em]">
-                  Elizabeth Alicia
+                  Elizabeth Alícia
                 </span>
 
                 <span className="mt-1 text-[12px] font-medium leading-[1.3] text-[#766A60]">
-                  Farmacêutica • Tricologia Clínica
+                  Farmacêutica Tricologista
                 </span>
 
                 <span className="mt-1 text-[12px] font-medium leading-[1.3] text-[#766A60]">
@@ -222,7 +222,7 @@ export default function About() {
           >
             <p>
               Sou farmacêutica e dedico minha atuação à
-              tricologia clínica e à saúde capilar, unindo
+              tricologia, unindo
               conhecimento científico, escuta atenta e um
               olhar individualizado para cada paciente.
             </p>

@@ -25,14 +25,15 @@ const procedures = [
   "Cuidados relacionados à dermatite seborreica",
   "Laser e LEDterapia capilar",
   "Microagulhamento capilar",
-  "Protocolos individualizados para o couro cabeludo",
+  "Intradermoterapia capilar",
+  "Planos terapêuticos individualizados para o couro cabeludo",
 ];
 
 const whatsappMessage =
   "Olá, Elizabeth! Vim pelo seu site e gostaria de agendar uma consulta.";
 
 const whatsappUrl =
-  "https://api.whatsapp.com/send?phone=5577999341034&text=" +
+  "https://api.whatsapp.com/send?phone=5577998151743&text=" +
   encodeURIComponent(whatsappMessage);
 
 export default function Atuacao() {

@@ -7,7 +7,7 @@ import { ArrowUpRight } from "lucide-react";
 const message =
   "Olá! Vim pelo site da Dra. Elizabeth Alicia e gostaria de agendar uma avaliação.";
 
-const href = `https://api.whatsapp.com/send?phone=5577999341034&text=${encodeURIComponent(message)}`;
+const href = `https://api.whatsapp.com/send?phone=5577998151743&text=${encodeURIComponent(message)}`;
 
 function WhatsAppIcon() {
   return (

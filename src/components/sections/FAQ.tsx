@@ -69,7 +69,7 @@ const whatsappMessage =
   "Olá, Elizabeth! Vim pelo seu site e gostaria de tirar uma dúvida sobre a consulta capilar.";
 
 const whatsappUrl =
-  "https://api.whatsapp.com/send?phone=5577999341034&text=" +
+  "https://api.whatsapp.com/send?phone=5577998151743&text=" +
   encodeURIComponent(whatsappMessage);
 
 export default function FAQ() {

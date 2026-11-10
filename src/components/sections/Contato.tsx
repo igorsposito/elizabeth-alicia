@@ -16,7 +16,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 const message =
   "Olá! Vim pelo site da Dra. Elizabeth Alicia e gostaria de agendar uma consulta. Poderia me informar sobre os horários disponíveis?";
 
-const whatsappUrl = `https://api.whatsapp.com/send?phone=5577999341034&text=${encodeURIComponent(message)}`;
+const whatsappUrl = `https://api.whatsapp.com/send?phone=5577998151743&text=${encodeURIComponent(message)}`;
 
 export default function Contato() {
   const reducedMotion = useReducedMotion();

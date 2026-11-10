@@ -8,7 +8,7 @@ import {
 const whatsappMessage =
   "Olá! Vim pelo site da Dra. Elizabeth Alícia e gostaria de saber mais sobre o agendamento de uma avaliação.";
 
-const whatsappUrl = `https://api.whatsapp.com/send?phone=5577999341034&text=${encodeURIComponent(whatsappMessage)}`;
+const whatsappUrl = `https://api.whatsapp.com/send?phone=5577998151743&text=${encodeURIComponent(whatsappMessage)}`;
 
 const navigation = [
   { label: "Início", href: "#inicio" },
@@ -36,11 +36,11 @@ export default function Footer() {
               className="group inline-flex flex-col items-start gap-1"
             >
               <Image
-                src="/images/logob.png"
+                src="/images/logo-ea.png"
                 alt="Elizabeth Alícia"
                 width={240}
                 height={110}
-                className="h-auto w-[200px] object-contain object-left sm:w-[220px]"
+                className="h-auto w-[200px] object-contain object-left brightness-0 invert sm:w-[220px]"
                 priority={false}
               />
             </a>

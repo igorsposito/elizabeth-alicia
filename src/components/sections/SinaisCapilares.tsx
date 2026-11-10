@@ -50,7 +50,7 @@ const whatsappMessage =
   "Olá, Elizabeth! Vim pelo seu site e gostaria de agendar uma consulta para avaliar minhas queixas capilares.";
 
 const whatsappUrl =
-  "https://api.whatsapp.com/send?phone=5577999341034&text=" +
+  "https://api.whatsapp.com/send?phone=5577998151743&text=" +
   encodeURIComponent(whatsappMessage);
 
 export default function SinaisCapilares() {
@@ -254,7 +254,7 @@ export default function SinaisCapilares() {
             </motion.div>
           </div>
 
-          {/* Fotografia editorial original */}
+          {/* Fotografia editorial */}
           <motion.div
             initial={{
               opacity: 0,
@@ -280,13 +280,14 @@ export default function SinaisCapilares() {
               className="pointer-events-none absolute -right-3 top-5 h-full w-full rounded-t-[220px] rounded-b-[12px] border border-[#C9A77A]/55 sm:-right-5 sm:top-7"
             />
 
-            <div className="relative aspect-[4/5] overflow-hidden rounded-t-[220px] rounded-b-[12px] bg-[#E7D8C6]">
+            {/* Imagem inteira, sem recorte */}
+            <div className="relative aspect-[854/1280] overflow-hidden rounded-t-[220px] rounded-b-[12px] bg-[#E7D8C6]">
               <Image
                 src="/images/sinais-editorial.jpg"
                 alt="Fotografia editorial relacionada à saúde capilar"
                 fill
                 sizes="(max-width: 1024px) 100vw, 45vw"
-                className="object-cover"
+                className="object-contain"
               />
             </div>
 

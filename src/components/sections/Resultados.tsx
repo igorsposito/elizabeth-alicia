@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, ArrowUpRight, X } from "lucide-react";
@@ -13,63 +13,31 @@ const scriptFont = MonteCarlo({
   display: "swap",
 });
 
-type Categoria = "Todos" | "Queda capilar" | "Densidade" | "Couro cabeludo";
-
 type Resultado = {
   id: number;
-  categoria: Exclude<Categoria, "Todos">;
+  categoria?: string;
   titulo: string;
   imagem: string;
 };
 
-const categorias: Categoria[] = [
-  "Todos",
-  "Queda capilar",
-  "Densidade",
-  "Couro cabeludo",
-];
-
-// Dados provisórios: substituir por casos reais autorizados.
 const resultados: Resultado[] = [
-  {
-    id: 1,
-    categoria: "Queda capilar",
-    titulo: "Resultado 01",
-    imagem: "/images/resultados/resultado-01.jpg",
-  },
-  {
-    id: 2,
-    categoria: "Densidade",
-    titulo: "Resultado 02",
-    imagem: "/images/resultados/resultado-02.jpg",
-  },
-  {
-    id: 3,
-    categoria: "Couro cabeludo",
-    titulo: "Resultado 03",
-    imagem: "/images/resultados/resultado-03.jpg",
-  },
-  {
-    id: 4,
-    categoria: "Queda capilar",
-    titulo: "Resultado 04",
-    imagem: "/images/resultados/resultado-04.jpg",
-  },
-  {
-    id: 5,
-    categoria: "Densidade",
-    titulo: "Resultado 05",
-    imagem: "/images/resultados/resultado-05.jpg",
-  },
-  {
-    id: 6,
-    categoria: "Couro cabeludo",
-    titulo: "Resultado 06",
-    imagem: "/images/resultados/resultado-06.jpg",
-  },
+  { id: 1, titulo: "Resultado 01", imagem: "/images/resultados/resultado-01.jpg" },
+  { id: 2, titulo: "Resultado 02", imagem: "/images/resultados/resultado-02.jpg" },
+  { id: 3, titulo: "Resultado 03", imagem: "/images/resultados/resultado-03.jpg" },
+  { id: 4, titulo: "Resultado 04", imagem: "/images/resultados/resultado-04.jpg" },
+  { id: 5, titulo: "Resultado 05", imagem: "/images/resultados/resultado-05.jpg" },
+  { id: 6, titulo: "Resultado 06", imagem: "/images/resultados/resultado-06.jpg" },
+  { id: 7, titulo: "Resultado 07", imagem: "/images/resultados/resultado-07.jpg" },
+  { id: 8, titulo: "Resultado 08", imagem: "/images/resultados/resultado-08.jpg" },
+  { id: 9, titulo: "Resultado 09", imagem: "/images/resultados/resultado-09.jpg" },
+  { id: 10, titulo: "Resultado 10", imagem: "/images/resultados/resultado-10.jpg" },
+  { id: 11, titulo: "Resultado 11", imagem: "/images/resultados/resultado-11.jpg" },
 ];
 
 const ease = [0.22, 1, 0.36, 1] as const;
+
+// Tempo para percorrer uma sequência completa de 11 fotos.
+const DURACAO_CARROSSEL = 90;
 
 function FotoResultado({
   resultado,
@@ -96,12 +64,16 @@ function FotoResultado({
   return (
     <Image
       src={resultado.imagem}
-      alt={`${resultado.titulo} — ${resultado.categoria}`}
+      alt={
+        resultado.categoria
+          ? `${resultado.titulo} — ${resultado.categoria}`
+          : resultado.titulo
+      }
       fill
       sizes={
         ampliada
           ? "(max-width: 768px) 100vw, 80vw"
-          : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          : "(max-width: 640px) 70vw, (max-width: 1024px) 40vw, 28vw"
       }
       className={
         ampliada
@@ -115,29 +87,59 @@ function FotoResultado({
 
 export default function Resultados() {
   const reducedMotion = useReducedMotion();
-  const [categoriaAtiva, setCategoriaAtiva] = useState<Categoria>("Todos");
+  const prefersReducedMotion = reducedMotion === true;
+
   const [selecionado, setSelecionado] = useState<number | null>(null);
+  const [pausado, setPausado] = useState(false);
+  const [distancia, setDistancia] = useState(0);
 
-  const filtrados =
-    categoriaAtiva === "Todos"
-      ? resultados
-      : resultados.filter((item) => item.categoria === categoriaAtiva);
+  const grupoRef = useRef<HTMLDivElement>(null);
+  const faixaRef = useRef<HTMLDivElement>(null);
 
-  const indiceSelecionado = filtrados.findIndex(
+  const indiceSelecionado = resultados.findIndex(
     (item) => item.id === selecionado
   );
 
   const resultadoSelecionado =
-    indiceSelecionado >= 0 ? filtrados[indiceSelecionado] : null;
+    indiceSelecionado >= 0 ? resultados[indiceSelecionado] : null;
 
   const navegar = (direcao: number) => {
     if (indiceSelecionado < 0) return;
 
     const proximo =
-      (indiceSelecionado + direcao + filtrados.length) % filtrados.length;
+      (indiceSelecionado + direcao + resultados.length) % resultados.length;
 
-    setSelecionado(filtrados[proximo].id);
+    setSelecionado(resultados[proximo].id);
   };
+
+  // Mede a largura real da primeira sequência para garantir
+  // uma repetição contínua, sem saltos.
+  useEffect(() => {
+    if (!grupoRef.current || !faixaRef.current) return;
+
+    const atualizarDistancia = () => {
+      const grupo = grupoRef.current;
+      const faixa = faixaRef.current;
+
+      if (!grupo || !faixa) return;
+
+      const gap = parseFloat(getComputedStyle(faixa).columnGap) || 0;
+
+      setDistancia(grupo.getBoundingClientRect().width + gap);
+    };
+
+    atualizarDistancia();
+
+    const observer = new ResizeObserver(atualizarDistancia);
+
+    observer.observe(grupoRef.current);
+    observer.observe(faixaRef.current);
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Pausa o movimento enquanto uma foto está ampliada.
+  const carrosselPausado = pausado || selecionado !== null;
 
   useEffect(() => {
     if (selecionado === null) return;
@@ -150,16 +152,16 @@ export default function Resultados() {
 
       if (event.key === "ArrowRight") {
         setSelecionado((atual) => {
-          const index = filtrados.findIndex((item) => item.id === atual);
-          return filtrados[(index + 1) % filtrados.length].id;
+          const index = resultados.findIndex((item) => item.id === atual);
+          return resultados[(index + 1) % resultados.length].id;
         });
       }
 
       if (event.key === "ArrowLeft") {
         setSelecionado((atual) => {
-          const index = filtrados.findIndex((item) => item.id === atual);
-          return filtrados[
-            (index - 1 + filtrados.length) % filtrados.length
+          const index = resultados.findIndex((item) => item.id === atual);
+          return resultados[
+            (index - 1 + resultados.length) % resultados.length
           ].id;
         });
       }
@@ -171,7 +173,42 @@ export default function Resultados() {
       document.body.style.overflow = overflowAnterior;
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [selecionado, filtrados]);
+  }, [selecionado]);
+
+  const renderizarFotos = (copia: boolean) =>
+    resultados.map((resultado) => (
+      <button
+        key={`${copia ? "copia" : "original"}-${resultado.id}`}
+        type="button"
+        tabIndex={copia ? -1 : 0}
+        aria-hidden={copia ? true : undefined}
+        onClick={() => setSelecionado(resultado.id)}
+        className="group relative isolate aspect-[4/5] w-[220px] shrink-0 overflow-hidden bg-[#EAE2D8] text-left sm:w-[280px] lg:w-[330px]"
+        aria-label={copia ? undefined : `Ampliar ${resultado.titulo}`}
+      >
+        <FotoResultado resultado={resultado} />
+
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#211C19]/75 via-transparent to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-100" />
+
+        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 text-[#F7F3EC] sm:p-6">
+          <div>
+            {resultado.categoria && (
+              <span className="block text-[10px] tracking-[0.12em] text-white/70 uppercase sm:text-[11px]">
+                {resultado.categoria}
+              </span>
+            )}
+
+            <h3 className="mt-1 font-display text-[18px] font-light sm:text-[23px]">
+              {resultado.titulo}
+            </h3>
+          </div>
+
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/40 transition-colors group-hover:bg-white group-hover:text-[#211C19]">
+            <ArrowUpRight size={17} />
+          </span>
+        </div>
+      </button>
+    ));
 
   return (
     <section
@@ -180,11 +217,11 @@ export default function Resultados() {
       className="relative overflow-hidden bg-[#F7F3EC] py-24 text-[#49372F] sm:py-28 lg:py-36"
     >
       <div className="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-16 xl:px-24">
-        {/* Cabeçalho */}
+        {/* Cabeçalho original */}
         <div className="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
           <motion.h2
             id="resultados-title"
-            initial={{ opacity: 0, y: reducedMotion ? 0 : 28 }}
+            initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 28 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.85, ease }}
@@ -200,7 +237,7 @@ export default function Resultados() {
           </motion.h2>
 
           <motion.p
-            initial={{ opacity: 0, y: reducedMotion ? 0 : 20 }}
+            initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8, delay: 0.12, ease }}
@@ -211,69 +248,52 @@ export default function Resultados() {
           </motion.p>
         </div>
 
-        {/* Filtros */}
-        <div className="mt-14 flex flex-wrap gap-2 border-b border-[#49372F]/15 pb-5 lg:mt-20">
-          {categorias.map((categoria) => (
-            <button
-              key={categoria}
-              type="button"
-              onClick={() => setCategoriaAtiva(categoria)}
-              aria-pressed={categoriaAtiva === categoria}
-              className={`rounded-full px-5 py-2.5 text-[12px] font-medium transition-colors duration-300 sm:text-[13px] ${
-                categoriaAtiva === categoria
-                  ? "bg-[#49372F] text-[#F7F3EC]"
-                  : "text-[#776A60] hover:bg-[#E7D8C6]/60 hover:text-[#49372F]"
-              }`}
-            >
-              {categoria}
-            </button>
-          ))}
-        </div>
-
-        {/* Galeria uniforme */}
+        {/* Carrossel contínuo com margens laterais */}
         <motion.div
-          layout
-          className="mt-7 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3"
+          initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.85, ease }}
+          className="relative mt-14 overflow-hidden lg:mt-20"
+          onMouseEnter={() => setPausado(true)}
+          onMouseLeave={() => setPausado(false)}
+          onFocusCapture={() => setPausado(true)}
+          onBlurCapture={(event) => {
+            if (
+              !event.currentTarget.contains(
+                event.relatedTarget as Node | null
+              )
+            ) {
+              setPausado(false);
+            }
+          }}
         >
-          <AnimatePresence mode="popLayout">
-            {filtrados.map((resultado, index) => (
-              <motion.button
-                key={resultado.id}
-                layout
-                type="button"
-                onClick={() => setSelecionado(resultado.id)}
-                initial={{ opacity: 0, y: reducedMotion ? 0 : 22 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{
-                  duration: 0.5,
-                  delay: index * 0.04,
-                  ease,
-                }}
-                className="group relative isolate aspect-[4/5] w-full overflow-hidden bg-[#EAE2D8] text-left"
-                aria-label={`Ampliar ${resultado.titulo}`}
+          <div
+            ref={faixaRef}
+            className="flex w-max gap-3 sm:gap-5"
+            style={{
+              animation:
+                !prefersReducedMotion && distancia > 0
+                  ? `resultados-deslizar ${DURACAO_CARROSSEL}s linear infinite`
+                  : "none",
+              animationPlayState: carrosselPausado ? "paused" : "running",
+              ["--distancia-carrossel" as string]: `-${distancia}px`,
+            }}
+          >
+            <div ref={grupoRef} className="flex shrink-0 gap-3 sm:gap-5">
+              {renderizarFotos(false)}
+            </div>
+
+            {!prefersReducedMotion && (
+              <div
+                className="flex shrink-0 gap-3 sm:gap-5"
+                aria-hidden="true"
+                inert
               >
-                <FotoResultado resultado={resultado} />
-
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#211C19]/75 via-transparent to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-100" />
-
-                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 text-[#F7F3EC] sm:p-6">
-                  <div>
-                    <span className="block text-[10px] tracking-[0.12em] text-white/70 uppercase sm:text-[11px]">
-                      {resultado.categoria}
-                    </span>
-                    <h3 className="mt-1 font-display text-[18px] font-light sm:text-[23px]">
-                      {resultado.titulo}
-                    </h3>
-                  </div>
-
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/40 transition-colors group-hover:bg-white group-hover:text-[#211C19]">
-                    <ArrowUpRight size={17} />
-                  </span>
-                </div>
-              </motion.button>
-            ))}
-          </AnimatePresence>
+                {renderizarFotos(true)}
+              </div>
+            )}
+          </div>
         </motion.div>
 
         <p className="mt-7 max-w-[720px] text-[12px] leading-[1.8] text-[#65594F]">
@@ -283,7 +303,7 @@ export default function Resultados() {
         </p>
       </div>
 
-      {/* Visualizador */}
+      {/* Visualizador original */}
       <AnimatePresence>
         {resultadoSelecionado && (
           <motion.div
@@ -322,9 +342,12 @@ export default function Resultados() {
 
               <div className="flex w-full items-center justify-between gap-4 pt-5 text-white">
                 <div>
-                  <p className="text-[11px] tracking-[0.12em] text-white/55 uppercase">
-                    {resultadoSelecionado.categoria}
-                  </p>
+                  {resultadoSelecionado.categoria && (
+                    <p className="text-[11px] tracking-[0.12em] text-white/55 uppercase">
+                      {resultadoSelecionado.categoria}
+                    </p>
+                  )}
+
                   <p className="mt-1 font-display text-[21px] font-light sm:text-[26px]">
                     {resultadoSelecionado.titulo}
                   </p>
@@ -332,7 +355,7 @@ export default function Resultados() {
 
                 <div className="flex items-center gap-3">
                   <span className="mr-2 text-[12px] tabular-nums text-white/55">
-                    {indiceSelecionado + 1} / {filtrados.length}
+                    {indiceSelecionado + 1} / {resultados.length}
                   </span>
 
                   <button
@@ -358,6 +381,17 @@ export default function Resultados() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <style jsx>{`
+        @keyframes resultados-deslizar {
+          from {
+            transform: translate3d(0, 0, 0);
+          }
+          to {
+            transform: translate3d(var(--distancia-carrossel), 0, 0);
+          }
+        }
+      `}</style>
     </section>
   );
 }

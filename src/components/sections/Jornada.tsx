@@ -43,7 +43,7 @@ const etapas = [
 const whatsappMessage =
   "Olá, Elizabeth! Vim pelo seu site e gostaria de agendar uma consulta para saber mais sobre o acompanhamento capilar.";
 
-const whatsappUrl = `https://api.whatsapp.com/send?phone=5577999341034&text=${encodeURIComponent(
+const whatsappUrl = `https://api.whatsapp.com/send?phone=5577998151743&text=${encodeURIComponent(
   whatsappMessage
 )}`;
 
