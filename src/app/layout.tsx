@@ -6,7 +6,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import "./globals.css";
 
-// Fontes originais do projeto
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
@@ -26,30 +25,10 @@ const allura = Allura({
   display: "swap",
 });
 
-// URL pública principal do site.
-// Configure NEXT_PUBLIC_SITE_URL na Vercel quando
-// o domínio oficial estiver confirmado.
-const officialDomain = process.env.NEXT_PUBLIC_SITE_URL
-  ?.trim()
-  .replace(/\/+$/, "");
-
-const vercelDomain =
-  process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-  process.env.VERCEL_URL;
-
-const siteUrl = officialDomain
-  ? officialDomain
-  : vercelDomain
-    ? `https://${vercelDomain}`
-    : "http://localhost:3000";
-
-const canonicalUrl = siteUrl;
+// Domínio oficial e canônico
+const siteUrl = "https://www.elizabethalicia.com.br";
 
 const isProduction = process.env.VERCEL_ENV === "production";
-
-// Não indexar ambientes de preview.
-const allowIndexing =
-  isProduction && Boolean(officialDomain);
 
 const siteName = "Elizabeth Alícia";
 
@@ -60,6 +39,11 @@ const siteDescription =
   "Conheça Elizabeth Alícia, farmacêutica com atuação em tricologia clínica. Avaliação individualizada da saúde capilar, dos cabelos e do couro cabeludo.";
 
 const ogImage = "/og-image.png";
+
+// Preencher após verificar o domínio no Search Console.
+// Não utilizar um código de outra propriedade.
+const googleVerification =
+  process.env.GOOGLE_SITE_VERIFICATION;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -76,7 +60,7 @@ export const metadata: Metadata = {
   authors: [
     {
       name: siteName,
-      url: canonicalUrl,
+      url: siteUrl,
     },
   ],
 
@@ -100,13 +84,13 @@ export const metadata: Metadata = {
   category: "health",
 
   alternates: {
-    canonical: canonicalUrl,
+    canonical: siteUrl,
   },
 
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    url: canonicalUrl,
+    url: siteUrl,
     siteName,
     title: siteTitle,
     description:
@@ -131,16 +115,22 @@ export const metadata: Metadata = {
   },
 
   robots: {
-    index: allowIndexing,
-    follow: allowIndexing,
+    index: isProduction,
+    follow: isProduction,
     googleBot: {
-      index: allowIndexing,
-      follow: allowIndexing,
+      index: isProduction,
+      follow: isProduction,
       "max-image-preview": "large",
       "max-snippet": -1,
       "max-video-preview": -1,
     },
   },
+
+  verification: googleVerification
+    ? {
+        google: googleVerification,
+      }
+    : undefined,
 
   formatDetection: {
     telephone: false,
@@ -160,37 +150,66 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebSite",
-        "@id": `${canonicalUrl}/#website`,
-        url: canonicalUrl,
-        name: siteName,
-        inLanguage: "pt-BR",
-        description: siteDescription,
+  
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: siteName,
+      description: siteDescription,
+      inLanguage: "pt-BR",
+    },
+    {
+      "@type": "Person",
+      "@id": `${siteUrl}/#elizabeth-alicia`,
+      name: siteName,
+      url: siteUrl,
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": siteUrl,
       },
-      {
-        "@type": "Person",
-        "@id": `${canonicalUrl}/#elizabeth-alicia`,
-        name: siteName,
-        description:
-          "Farmacêutica com atuação em tricologia clínica e saúde capilar.",
-        url: canonicalUrl,
-        sameAs: [
-          "https://www.instagram.com/elizabethalicia/",
-        ],
-        knowsAbout: [
-          "Tricologia clínica",
-          "Saúde capilar",
-          "Avaliação capilar",
-          "Cuidados com o couro cabeludo",
-          "Estética",
-        ],
-      },
-    ],
-  };
+      jobTitle: "Farmacêutica",
+      description:
+        "Farmacêutica com atuação em tricologia clínica e saúde capilar, com atendimentos em Vitória da Conquista e Barra do Choça, Bahia.",
+      knowsAbout: [
+        "Tricologia clínica",
+        "Saúde capilar",
+        "Avaliação capilar",
+        "Queda capilar",
+        "Cuidados com o couro cabeludo",
+      ],
+      workLocation: [
+        {
+          "@type": "Place",
+          name: "Vitória da Conquista, Bahia",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Vitória da Conquista",
+            addressRegion: "BA",
+            addressCountry: "BR",
+          },
+        },
+        {
+          "@type": "Place",
+          name: "Barra do Choça, Bahia",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Barra do Choça",
+            addressRegion: "BA",
+            addressCountry: "BR",
+          },
+        },
+      ],
+      sameAs: [
+        "https://www.instagram.com/elizabethalicia/",
+      ],
+    },
+  ],
+};
+
 
   return (
     <html lang="pt-BR">
