@@ -33,7 +33,7 @@ const isProduction = process.env.VERCEL_ENV === "production";
 const siteName = "Elizabeth Alícia";
 
 const siteTitle =
-  "Elizabeth Alícia | Tricologia Clínica e Saúde Capilar";
+  "Elizabeth Alícia | Tricologia Clínica";
 
 const siteDescription =
   "Conheça Elizabeth Alícia, farmacêutica com atuação em tricologia clínica. Avaliação individualizada da saúde capilar, dos cabelos e do couro cabeludo.";
@@ -100,7 +100,7 @@ export const metadata: Metadata = {
         url: ogImage,
         width: 1200,
         height: 630,
-        alt: "Elizabeth Alícia — Tricologia Clínica e Saúde Capilar",
+        alt: "Elizabeth Alícia — Tricologia Clínica",
         type: "image/png",
       },
     ],
