@@ -82,30 +82,35 @@ export default function FAQ() {
       aria-labelledby="faq-title"
       className="relative isolate scroll-mt-20 overflow-hidden bg-[#EFE5DA] py-16 text-[#353535] sm:py-20 lg:py-24"
     >
-      {/* Fotografia editorial de fundo */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
-      >
-        <div className="absolute inset-0 hidden overflow-hidden lg:block lg:opacity-65">
-          <div className="absolute inset-0 -translate-x-[12%]">
-            <Image
-              src="/images/faq-background.png"
-              alt=""
-              fill
-              sizes="100vw"
-              className="object-cover object-[38%_28%] lg:object-[30%_20%]"
-              quality={85}
-            />
-          </div>
-        </div>
 
-        {/* Degradê para preservar a leitura */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#EFE5DA]/25 via-[#EFE5DA]/55 to-[#EFE5DA]/95" />
+{/* Fotografia editorial de fundo */}
+<div
+  aria-hidden="true"
+  className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+>
+  <div className="absolute inset-0 hidden overflow-hidden lg:block lg:opacity-65">
+<div className="absolute inset-y-0 -left-[30%] w-[78%] xl:-left-[22%]">
+      <Image
+        src="/images/faq-editorial.jpg"
+        alt=""
+        fill
+        sizes="(min-width: 1024px) 78vw, 100vw"
+className="object-cover object-[50%_22%]"
+        quality={85}
+      />
+    </div>
+  </div>
 
-        {/* Suavização vertical */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#EFE5DA]/20 via-transparent to-[#EFE5DA]/75" />
-      </div>
+  {/* Degradê horizontal: integra a foto ao fundo */}
+  <div className="absolute inset-0 bg-gradient-to-r from-[#EFE5DA]/20 via-[#EFE5DA]/70 to-[#EFE5DA]" />
+
+  {/* Suavização vertical */}
+  <div className="absolute inset-0 bg-gradient-to-b from-[#EFE5DA]/30 via-transparent to-[#EFE5DA]/90" />
+
+  {/* Suavização adicional da borda direita da fotografia */}
+  <div className="absolute inset-y-0 left-[20%] hidden w-[45%] bg-gradient-to-r from-transparent via-[#EFE5DA]/80 to-[#EFE5DA] lg:block" />
+</div>
+
 
       {/* Iluminação ambiente champagne */}
       <div
@@ -210,20 +215,23 @@ export default function FAQ() {
             transition={{ duration: 0.85, ease }}
             className="lg:sticky lg:top-28 lg:self-start"
           >
-            <h2
-              id="faq-title"
-              className="font-display text-[clamp(2.8rem,4.8vw,5.4rem)] font-light leading-[1.07] tracking-[-0.055em]"
-            >
-              Ainda tem
-              <br />
-              <span
-                className={`${scriptFont.className} inline-block text-[1.3em] leading-[0.9] tracking-normal text-[#B69268]`}
-              >
-                dúvidas?
-              </span>
-            </h2>
 
-            <p className="mt-5 max-w-[390px] text-[15px] font-light leading-[1.9] text-[#625B55] sm:text-[17px]">
+          <h2
+            id="faq-title"
+            className="relative isolate w-fit font-display text-[clamp(2.8rem,4.8vw,5.4rem)] font-light leading-[1.07] tracking-[-0.055em]lg:translate-x-[45px] xl:translate-x-[65px]"
+          >
+
+            Ainda tem
+            <br />
+            <span
+              className={`${scriptFont.className} inline-block text-[1.3em] leading-[0.9] tracking-normal text-[#8b5415]`}
+            >
+              dúvidas?
+            </span>
+          </h2>
+
+
+            <p className="mt-5 max-w-[390px] text-[15px] font-light leading-[1.9] text-[#24211F] sm:text-[17px] [filter:drop-shadow(0_1px_8px_rgba(255,255,255,0.9))] lg:translate-x-[45px] xl:translate-x-[65px]">
               Reunimos respostas para algumas das
               perguntas mais frequentes sobre saúde
               capilar, investigação clínica e
@@ -234,7 +242,7 @@ export default function FAQ() {
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group mt-7 inline-flex min-h-[56px] items-center justify-center gap-4 rounded-full border border-[#B69268]/60 px-7 py-4 text-[14px] font-semibold text-[#353535] transition-colors duration-300 hover:border-[#B69268] hover:bg-[#B69268] hover:text-white"
+              className="group mt-7 inline-flex min-h-[56px] items-center justify-center gap-4 rounded-full border border-[#B69268]/60 px-7 py-4 text-[14px] font-semibold text-[#353535] transition-colors duration-300 hover:border-[#B69268] hover:bg-[#B69268] hover:text-white lg:translate-x-[45px] xl:translate-x-[65px]"
             >
               Conversar pelo WhatsApp
 

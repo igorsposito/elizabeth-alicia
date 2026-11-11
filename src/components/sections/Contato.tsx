@@ -123,99 +123,6 @@ export default function Contato() {
 
         <div className="absolute inset-0 bg-[#F7F3EC]/35" />
 
-        {/* Sombras botânicas animadas */}
-        <motion.svg
-          viewBox="0 0 480 760"
-          fill="none"
-          aria-hidden="true"
-          className="absolute -left-[150px] top-[4%] h-[74%] w-[380px] origin-bottom-left text-[#756A55] opacity-[0.24] blur-[3px] sm:-left-[100px] sm:w-[460px] lg:-left-[75px] lg:opacity-[0.30]"
-          animate={
-            reducedMotion
-              ? undefined
-              : {
-                  rotate: [-6, 5, -6],
-                  x: [-15, 20, -15],
-                  y: [4, -12, 4],
-                }
-          }
-          transition={{
-            duration: 13,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          <path
-            d="M-20 760 C70 600 80 415 170 235 C205 162 245 94 315 25"
-            stroke="currentColor"
-            strokeWidth="9"
-            strokeLinecap="round"
-          />
-          <path
-            d="M87 546 C-10 515 -30 445 3 371 C78 383 116 444 87 546Z"
-            fill="currentColor"
-          />
-          <path
-            d="M124 415 C213 422 271 357 272 277 C181 282 135 333 124 415Z"
-            fill="currentColor"
-          />
-          <path
-            d="M165 289 C78 272 51 209 76 144 C148 160 180 217 165 289Z"
-            fill="currentColor"
-          />
-          <path
-            d="M220 161 C305 176 371 122 382 51 C296 45 241 88 220 161Z"
-            fill="currentColor"
-          />
-          <path
-            d="M61 622 C140 621 192 569 198 493 C126 497 78 535 61 622Z"
-            fill="currentColor"
-          />
-        </motion.svg>
-
-        <motion.svg
-          viewBox="0 0 440 720"
-          fill="none"
-          aria-hidden="true"
-          className="absolute -right-[180px] bottom-[-12%] h-[70%] w-[350px] origin-bottom-right -scale-x-100 text-[#897963] opacity-[0.19] blur-[5px] sm:-right-[115px] sm:w-[430px] lg:opacity-[0.24]"
-          animate={
-            reducedMotion
-              ? undefined
-              : {
-                  rotate: [5, -5, 5],
-                  x: [10, -18, 10],
-                  y: [-5, 14, -5],
-                }
-          }
-          transition={{
-            duration: 17,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
-          <path
-            d="M-10 740 C60 560 122 412 195 270 C240 170 275 110 335 15"
-            stroke="currentColor"
-            strokeWidth="8"
-            strokeLinecap="round"
-          />
-          <path
-            d="M65 575 C-25 550 -40 475 -5 404 C70 423 100 480 65 575Z"
-            fill="currentColor"
-          />
-          <path
-            d="M126 426 C215 430 267 363 266 292 C184 293 139 350 126 426Z"
-            fill="currentColor"
-          />
-          <path
-            d="M180 301 C95 278 77 208 106 148 C172 172 201 228 180 301Z"
-            fill="currentColor"
-          />
-          <path
-            d="M250 154 C322 168 382 115 389 47 C320 45 273 82 250 154Z"
-            fill="currentColor"
-          />
-        </motion.svg>
-
         {/* Iluminação ambiente */}
         <motion.div
           className="absolute -left-[18%] top-[4%] h-[70%] w-[48%] rounded-full bg-[#FFFDF7]/70 blur-[100px]"
@@ -239,35 +146,43 @@ export default function Contato() {
       </div>
 
       <div className="relative mx-auto flex w-full max-w-[1180px] flex-col items-center px-6 text-center sm:px-10 lg:px-16">
-        <motion.h2
-          id="contato-title"
-          initial={{
-            opacity: 0,
-            y: reducedMotion ? 0 : 35,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-            amount: 0.35,
-          }}
-          transition={{
-            duration: 0.9,
-            ease,
-          }}
-          className="max-w-[1050px] font-display text-[clamp(2.9rem,6.5vw,7.4rem)] font-light leading-[1.06] tracking-[-0.06em]"
-        >
-          Seu próximo passo
-          <br />
-          começa com
-          <span
-            className={`${scriptFont.className} ml-3 inline-block text-[1.25em] leading-[0.82] tracking-normal text-[#B58E69] sm:ml-5`}
-          >
-            clareza.
-          </span>
-        </motion.h2>
+
+
+<motion.h2
+  id="contato-title"
+  initial={{
+    opacity: 0,
+    y: reducedMotion ? 0 : 35,
+  }}
+  whileInView={{
+    opacity: 1,
+    y: 0,
+  }}
+  viewport={{
+    once: true,
+    amount: 0.35,
+  }}
+  transition={{
+    duration: 0.9,
+    ease,
+  }}
+    className="w-full max-w-[1180px] font-display text-[clamp(3rem,8vw,3rem)] font-light leading-[1.15] tracking-[-0.06em] lg:text-[6rem]"
+>
+  <span className="block lg:whitespace-nowrap">
+    Resultados consistentes
+  </span>
+
+  <span className="block lg:whitespace-nowrap">
+    começam com uma condução
+  </span>
+
+  <span
+    className={`${scriptFont.className} block pb-3 text-[1.35em] leading-[1.1] tracking-normal text-[#B58E69] lg:whitespace-nowrap`}
+  >
+    individualizada.
+  </span>
+</motion.h2>
+
 
         <motion.p
           initial={{

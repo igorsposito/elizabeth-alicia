@@ -149,7 +149,7 @@ export default function Header() {
             aria-label="Elizabeth Alícia — Início"
           >
             <Image
-              src="/images/logo-header.png"
+              src="/images/logo-ea.png"
               alt="Elizabeth Alícia"
               width={400}
               height={180}
