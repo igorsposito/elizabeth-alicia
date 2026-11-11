@@ -1,4 +1,3 @@
-
 import type { MetadataRoute } from "next";
 
 const siteUrl = "https://www.elizabethalicia.com.br";
